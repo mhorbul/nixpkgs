@@ -3,6 +3,7 @@
   buildGoModule,
   fetchFromGitHub,
   go-mockery,
+  go,
 }:
 
 buildGoModule rec {
@@ -16,11 +17,12 @@ buildGoModule rec {
     hash = "sha256-ISo6r+mMuXiGTIALXA5+xCKNOzNTNFz8cdGtbWyQRNI=";
   };
 
-  buildInputs = [ go-mockery ];
+  nativeBuildInputs = [ go-mockery go ];
 
   preBuild = ''
     export PATH="$nativeBuildInputs/bin:$PATH"
     export GOCACHE=$(mktemp -d)
+    export GOROOT="${go}/share/go"
     make generate-mocks
   '';
 
