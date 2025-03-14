@@ -19,8 +19,21 @@ buildGoModule rec {
 
   nativeBuildInputs = [ go ];
 
-  # Skip mock generation as it's causing issues with standard library resolution
-  preBuild = "";
+  # Skip mock generation and patch go generate commands
+  preBuild = ''
+    # Create empty mock files to satisfy imports
+    mkdir -p test/mocks
+    touch test/mocks/mock_*.go
+
+    # Patch any go:generate directives
+    find . -type f -name '*.go' -exec sed -i 's|//go:generate mockery|//skip:generate mockery|g' {} +
+  '';
+
+  buildPhase = ''
+    runHook preBuild
+    go build -o $GOPATH/bin/terragrunt
+    runHook postBuild
+  '';
 
   vendorHash = "sha256-EO3zgqVqf994xB55twRmcGBQdffrNr2BejNq2jlkMSA=";
 
