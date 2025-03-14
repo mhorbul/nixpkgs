@@ -17,23 +17,10 @@ buildGoModule rec {
     hash = "sha256-ISo6r+mMuXiGTIALXA5+xCKNOzNTNFz8cdGtbWyQRNI=";
   };
 
-  nativeBuildInputs = [ go-mockery go ];
+  nativeBuildInputs = [ go ];
 
-  preBuild = ''
-    export PATH="$nativeBuildInputs/bin:$PATH"
-    export GOROOT="${go}/share/go"
-    export GOPATH=$TMPDIR/go
-    export GOCACHE=$TMPDIR/go-cache
-    mkdir -p $GOPATH
-
-    # Copy source to a location where mockery can find it
-    mkdir -p $GOPATH/src/github.com/gruntwork-io/terragrunt
-    cp -r . $GOPATH/src/github.com/gruntwork-io/terragrunt/
-    cd $GOPATH/src/github.com/gruntwork-io/terragrunt
-
-    make generate-mocks
-    cd -
-  '';
+  # Skip mock generation as it's causing issues with standard library resolution
+  preBuild = "";
 
   vendorHash = "sha256-EO3zgqVqf994xB55twRmcGBQdffrNr2BejNq2jlkMSA=";
 
