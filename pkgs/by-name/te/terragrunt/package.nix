@@ -16,9 +16,11 @@ buildGoModule rec {
     hash = "sha256-ISo6r+mMuXiGTIALXA5+xCKNOzNTNFz8cdGtbWyQRNI=";
   };
 
-  nativeBuildInputs = [ go-mockery ];
+  buildInputs = [ go-mockery ];
 
   preBuild = ''
+    export PATH="$nativeBuildInputs/bin:$PATH"
+    export GOCACHE=$(mktemp -d)
     make generate-mocks
   '';
 
